@@ -1,5 +1,5 @@
 <?php
-require 'db-config.php';
+require_once 'db-config.php';
 
 $data = json_decode(file_get_contents("php://input"));
 
@@ -10,7 +10,7 @@ $language = $data->language;
 
 try {
 	
-$db_conn = mysqli_connect($host,$user,$password,$database);
+$db_conn = mysqli_connect($host, $user, $password, $database);
 $sql_table = "
 CREATE TABLE IF NOT EXISTS `settings` (
 	`id` INT(6) NOT NULL AUTO_INCREMENT,
@@ -44,8 +44,7 @@ CREATE TABLE IF NOT EXISTS `products` (
 ) ENGINE=InnoDB;
 ";
 mysqli_multi_query($db_conn, $sql_table);
-while(mysqli_more_results($db_conn))
-{
+while (mysqli_more_results($db_conn)) {
    mysqli_next_result($db_conn);
 }
 try {
@@ -53,15 +52,13 @@ try {
 $sql_insert_user = "INSERT INTO admin_users (email, password)
 VALUES ('$site_email', '$site_password')";
 $sql_insert_site = "INSERT INTO settings (sitename, lang)
-VALUES ('$site_name', '$language')";	
+VALUES ('$site_name', '$language')";
 $db_conn->query($sql_insert_user);
 $db_conn->query($sql_insert_site);
 	
-} catch(mysqli_sql_exception $e){
-  echo json_encode(["error" => true, "msg" => $e]);	
-}	
-} catch(mysqli_sql_exception $e) {
-  echo json_encode(["error" => true, "msg" => $e]);	
+} catch (mysqli_sql_exception $e) {
+  echo json_encode(["error" => true, "msg" => $e]);
 }
-
-?>
+} catch (mysqli_sql_exception $e) {
+  echo json_encode(["error" => true, "msg" => $e]);
+}
